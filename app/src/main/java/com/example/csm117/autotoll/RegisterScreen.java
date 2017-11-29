@@ -14,8 +14,18 @@ public class RegisterScreen extends AppCompatActivity {
         setContentView(R.layout.activity_register_screen);
 
         // cancel button functionality: go back to main screen
-        final Button button_log = findViewById(R.id.button_cancel);
-        button_log.setOnClickListener(new View.OnClickListener() {
+        final Button button_cancel = findViewById(R.id.button_cancel);
+        button_cancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(nextScreen);
+            }
+        });
+
+        // register button functionality: go back to main screen, consult database on saved inputs
+        final Button button_register = findViewById(R.id.button_register2);
+        button_register.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Starting a new Intent
                 Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);

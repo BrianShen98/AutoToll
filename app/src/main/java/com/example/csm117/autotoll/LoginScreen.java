@@ -14,12 +14,20 @@ public class LoginScreen extends AppCompatActivity {
         setContentView(R.layout.activity_login_screen);
 
         // cancel button functionality: go back to main screen
-        final Button button_log = findViewById(R.id.button_cancel2);
-        button_log.setOnClickListener(new View.OnClickListener() {
+        final Button button_cancel = findViewById(R.id.button_cancel2);
+        button_cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Starting a new Intent
                 Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(nextScreen);
+            }
+        });
+
+        // login button functionality: save inputs and consult database
+        final Button button_log = findViewById(R.id.button_login2);
+        button_log.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO: Add new activity to go to (the dashboard)
             }
         });
     }
