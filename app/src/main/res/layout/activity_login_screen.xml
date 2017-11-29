@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.csm117.autotoll.LoginScreen">
+
+    <TextView
+        android:id="@+id/login_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Login"
+        android:layout_gravity="center"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/text_log_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="Username"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/input_log_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="Example: joesmith" />
+
+    <TextView
+        android:id="@+id/text_log_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="Password"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/input_log_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_cancel2"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="315dp"
+            android:layout_width="172dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/button_login2"
+            tools:layout_editor_absoluteX="196dp"
+            tools:layout_editor_absoluteY="315dp"
+            android:layout_width="172dp"
+            android:layout_height="wrap_content"
+            android:text="Login" />
+    </LinearLayout>
+</LinearLayout>
