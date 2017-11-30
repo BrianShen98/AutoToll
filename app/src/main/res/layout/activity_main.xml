@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registration Successful!"
+        android:textAlignment="center"
+        android:background="#FFFFFF"
+        android:textSize="18sp" />
+
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="357dp"
