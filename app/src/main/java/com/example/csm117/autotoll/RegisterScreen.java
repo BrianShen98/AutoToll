@@ -2,12 +2,13 @@ package com.example.csm117.autotoll;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.graphics.Color;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import java.lang.String;
-import android.util.Log;
 
 public class RegisterScreen extends AppCompatActivity {
 
@@ -24,6 +25,7 @@ public class RegisterScreen extends AppCompatActivity {
         inputNFC = (EditText) findViewById(R.id.input_reg_nfc);
         inputUsername = (EditText) findViewById(R.id.input_reg_username);
         inputPassword = (EditText) findViewById(R.id.input_reg_password);
+        final TextView banner = (TextView) findViewById(R.id.banner_reg);
 
         // cancel button functionality: go back to main screen
         final Button button_cancel = findViewById(R.id.button_cancel);
@@ -46,30 +48,19 @@ public class RegisterScreen extends AppCompatActivity {
                 String nfc = inputNFC.getText().toString();
                 String username = inputUsername.getText().toString();
                 String password = inputPassword.getText().toString();
-                int valid = 1;
-                Log.e("n", nfc + " " + username + " " + password);
+                int valid = 1; // check if registration is valid or not
 
-                // input detail validation: make sure NFC sticker is a 4-byte hex
-                if(nfc.length() != 8)
-                    valid = 0;
-                String hexadecimalValues = "0123456789ABCDEF";
-                for(int x = 0; x < nfc.length(); x++) {
-                    boolean found = false;
-                    for(int y = 0; y < hexadecimalValues.length(); y++) {
-                        if(hexadecimalValues.charAt(y) == nfc.charAt(x)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if(!found) {
-                        valid = 0;
-                        break;
-                    }
-                }
+                // TODO: Add database logic here
+                String errMsg = ""; // error message from server side
 
                 // switch activity
                 nextScreen.putExtra("registration_success", valid);
-                startActivity(nextScreen);
+                if(valid == 1)
+                    startActivity(nextScreen);
+                else { // display the error message
+                    banner.setText(errMsg);
+                    banner.setBackgroundColor(Color.parseColor("#FF0000"));
+                }
             }
         });
     }

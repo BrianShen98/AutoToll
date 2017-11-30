@@ -35,17 +35,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        // Logic here primarily from when the user attempts to register a new account
         // Pop up registration success or failure
         Intent i = getIntent();
 
         // indicate 2 as we have not visited register and not registered yet
         int reg_success = i.getIntExtra("registration_success", 2);
         final TextView banner = (TextView)findViewById(R.id.banner);
-        if(reg_success == 0) { // registration failure
-            banner.setBackgroundColor(Color.parseColor("#FF0000"));
-            banner.setText("Registration failed. Please try again.");
-        }
-        else if(reg_success == 1) { // registration success
+//        if(reg_success == 0) { // registration failure
+//            banner.setBackgroundColor(Color.parseColor("#FF0000"));
+//            banner.setText("Registration failed. Please try again.");
+//        }
+        if(reg_success == 1) { // registration success
             banner.setBackgroundColor(Color.parseColor("#00FF00"));
             banner.setText("Registration successful!");
         }

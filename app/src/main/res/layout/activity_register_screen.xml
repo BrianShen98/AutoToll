@@ -8,6 +8,15 @@
     tools:context="com.example.csm117.autotoll.RegisterScreen">
 
     <TextView
+        android:id="@+id/banner_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Error Message"
+        android:textAlignment="center"
+        android:background="#FFFFFF"
+        android:textSize="18sp" />
+
+    <TextView
         android:id="@+id/registration_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
