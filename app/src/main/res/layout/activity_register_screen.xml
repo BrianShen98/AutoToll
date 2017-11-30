@@ -11,7 +11,7 @@
         android:id="@+id/banner_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Error Message"
+        android:text=""
         android:textAlignment="center"
         android:background="#FFFFFF"
         android:textSize="18sp" />

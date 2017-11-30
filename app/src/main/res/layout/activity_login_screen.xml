@@ -8,6 +8,15 @@
     tools:context="com.example.csm117.autotoll.LoginScreen">
 
     <TextView
+        android:id="@+id/banner_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:background="#FFFFFF" />
+
+    <TextView
         android:id="@+id/login_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

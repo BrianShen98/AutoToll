@@ -50,8 +50,15 @@ public class RegisterScreen extends AppCompatActivity {
                 String password = inputPassword.getText().toString();
                 int valid = 1; // check if registration is valid or not
 
-                // TODO: Add database logic here
                 String errMsg = ""; // error message from server side
+
+                // all fields are mandatory, so check if user left out any input
+                if(nfc.length() != 8 || username.length() == 0 || password.length() == 0) {
+                    valid = 0;
+                    errMsg = "All fields must be filled out";
+                }
+
+                // TODO: Add database logic here
 
                 // switch activity
                 nextScreen.putExtra("registration_success", valid);
