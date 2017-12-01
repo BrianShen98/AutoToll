@@ -61,9 +61,15 @@ public class RegisterScreen extends AppCompatActivity {
                 errMsg = "";
 
                 // all fields are mandatory, so check if user left out any input
-                if(nfc.length() != 8 || username.length() == 0 || password.length() == 0) {
+                if(username.length() == 0 || password.length() == 0) {
                     valid = 0;
                     errMsg = "All fields must be filled out";
+                }
+                // make sure NFC sticker is 4-byte hexadecimal (8 characters)
+                // logic of valid hexadecimal stickers handled server-side
+                else if(nfc.length() != 8) {
+                    valid = 0;
+                    errMsg = "NFC sticker must be an 8-character hexadecimal";
                 }
 
                 // Consult server
