@@ -93,7 +93,7 @@
             android:id="@+id/button_cancel3"
             android:layout_width="172dp"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="Logout"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="315dp" />
 

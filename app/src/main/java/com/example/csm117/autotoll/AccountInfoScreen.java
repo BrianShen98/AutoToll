@@ -19,9 +19,15 @@ public class AccountInfoScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deposit_screen);
 
+        Intent i = getIntent();
+
         inputDeposit = (EditText) findViewById(R.id.input_log_amount);
         final TextView banner3 = (TextView) findViewById(R.id.banner_deposit);
         //final TextView userBalance = (TextView) findViewById(R.id.current_balance);
+
+        String username = i.getStringExtra("username");
+        final TextView greeting = (TextView) findViewById(R.id.text_log_username);
+        greeting.setText("Hello, " + username);
 
 
         // cancel button functionality: go back to main screen
@@ -70,7 +76,7 @@ public class AccountInfoScreen extends AppCompatActivity {
                     initial = initial + deposit;
                     userBalance.setText("" + initial);
                 }
-                // TODO: Add database logic here
+                // TODO: Add database logic here (read and write database, update balance, etc
 
 
                 // switch activity

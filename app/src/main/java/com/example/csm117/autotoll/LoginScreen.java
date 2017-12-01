@@ -58,8 +58,10 @@ public class LoginScreen extends AppCompatActivity {
 
 
                 // switch activity, if authentication is successful
-                if(valid == 1)
+                if(valid == 1) {
+                    nextScreen.putExtra("username", username);
                     startActivity(nextScreen);
+                }
                 else { // display the error message
                     banner2.setText(errMsg);
                     banner2.setBackgroundColor(Color.parseColor("#FF0000"));
