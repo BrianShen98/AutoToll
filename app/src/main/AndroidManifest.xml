@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterScreen" />
-        <activity android:name=".LoginScreen"></activity>
+        <activity android:name=".LoginScreen" />
+        <activity android:name=".AccountInfoScreen"></activity>
     </application>
 
 </manifest>

@@ -38,9 +38,8 @@ public class LoginScreen extends AppCompatActivity {
         final Button button_log = findViewById(R.id.button_login2);
         button_log.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO: Change going back to MainActivity to the dashboard activity
                 // starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+                Intent nextScreen = new Intent(getApplicationContext(), AccountInfoScreen.class);
 
                 // obtain inputs
                 String username = inputUsername.getText().toString();
@@ -58,7 +57,7 @@ public class LoginScreen extends AppCompatActivity {
                 // TODO: Add database logic here
 
 
-                // switch activity
+                // switch activity, if authentication is successful
                 if(valid == 1)
                     startActivity(nextScreen);
                 else { // display the error message
