@@ -8,14 +8,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.android.volley.*;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginScreen extends AppCompatActivity {
 
     // Initialize variables
     EditText inputUsername;
     EditText inputPassword;
+    int valid;
+    String errMsg;
+    String user_name;
+    String user_balance;
+    RequestQueue queue = Volley.newRequestQueue(this);
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
@@ -45,9 +55,9 @@ public class LoginScreen extends AppCompatActivity {
                 // obtain inputs
                 String username = inputUsername.getText().toString();
                 String password = inputPassword.getText().toString();
-                int valid = 1; // check if login is valid or not
+                valid = 1; // check if login is valid or not
 
-                String errMsg = ""; // error message from server side
+                errMsg = ""; // error message from server side
 
                 // all fields are mandatory, so check if user left out any input
                 if(username.length() == 0 || password.length() == 0) {
@@ -55,8 +65,41 @@ public class LoginScreen extends AppCompatActivity {
                     errMsg = "All fields must be filled out";
                 }
 
-                // TODO: Add database logic here
+                // Consult server
+                String url = "http://localhost:3000/login";
+                JSONObject reqContent = new JSONObject();
+                try {
+                    reqContent.put("username",username);
+                    reqContent.put("password",password);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String status = response.get("status").toString();
+                            if(status == "Failure"){
+                                valid = 0;
+                                errMsg = response.get("info").toString();
+                            }
+                            else{
+                                user_name = response.get("user").toString();
+                                user_balance = response.get("balance").toString();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+                queue.add(jsObjRequest);
 
                 // switch activity
                 if(valid == 1)

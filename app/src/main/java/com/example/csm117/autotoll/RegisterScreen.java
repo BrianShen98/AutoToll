@@ -4,11 +4,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import java.lang.String;
+import com.android.volley.*;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterScreen extends AppCompatActivity {
 
@@ -16,7 +23,9 @@ public class RegisterScreen extends AppCompatActivity {
     EditText inputNFC;
     EditText inputUsername;
     EditText inputPassword;
-
+    int valid; // check if registration is valid or not
+    String errMsg; // error message from server side
+    RequestQueue queue = Volley.newRequestQueue(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +57,8 @@ public class RegisterScreen extends AppCompatActivity {
                 String nfc = inputNFC.getText().toString();
                 String username = inputUsername.getText().toString();
                 String password = inputPassword.getText().toString();
-                int valid = 1; // check if registration is valid or not
-
-                String errMsg = ""; // error message from server side
+                valid = 1;
+                errMsg = "";
 
                 // all fields are mandatory, so check if user left out any input
                 if(nfc.length() != 8 || username.length() == 0 || password.length() == 0) {
@@ -58,8 +66,40 @@ public class RegisterScreen extends AppCompatActivity {
                     errMsg = "All fields must be filled out";
                 }
 
-                // TODO: Add database logic here
+                // Consult server
+                String url = "http://localhost:3000/register";
+                JSONObject reqContent = new JSONObject();
+                try {
+                    reqContent.put("NFC_ID",nfc);
+                    reqContent.put("username",username);
+                    reqContent.put("password",password);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String status = response.get("status").toString();
+                            String info = response.get("info").toString();
+                            if(status == "Failure"){
+                                valid = 0;
+                                errMsg = info;
+                            }
+                        } catch (JSONException e) {
+                            Log.d("error:","hahahaha");
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+
+                queue.add(jsObjRequest);
                 // switch activity
                 nextScreen.putExtra("registration_success", valid);
                 if(valid == 1)
