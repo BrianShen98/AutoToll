@@ -22,14 +22,15 @@ public class LoginScreen extends AppCompatActivity {
     EditText inputPassword;
     int valid;
     String errMsg;
-    String user_name;
-    String user_balance;
-    RequestQueue queue = Volley.newRequestQueue(this);
-
+    String balance;
+    String username;
+    RequestQueue queue ;
+    Intent nextScreen;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
 
+        queue = Volley.newRequestQueue(this);
         inputUsername = (EditText) findViewById(R.id.input_log_username);
         inputPassword = (EditText) findViewById(R.id.input_log_password);
         final TextView banner2 = (TextView) findViewById(R.id.banner_log);
@@ -39,7 +40,7 @@ public class LoginScreen extends AppCompatActivity {
         button_cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+                nextScreen = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(nextScreen);
             }
         });
@@ -49,10 +50,10 @@ public class LoginScreen extends AppCompatActivity {
         button_log.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), AccountInfoScreen.class);
+                nextScreen = new Intent(getApplicationContext(), AccountInfoScreen.class);
 
                 // obtain inputs
-                String username = inputUsername.getText().toString();
+                username = inputUsername.getText().toString();
                 String password = inputPassword.getText().toString();
                 valid = 1; // check if login is valid or not
 
@@ -62,53 +63,53 @@ public class LoginScreen extends AppCompatActivity {
                 if(username.length() == 0 || password.length() == 0) {
                     valid = 0;
                     errMsg = "All fields must be filled out";
-                }
-
-                // Consult server
-                String url = "http://localhost:3000/login";
-                JSONObject reqContent = new JSONObject();
-                try {
-                    reqContent.put("username",username);
-                    reqContent.put("password",password);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.get("status").toString();
-                            if(status == "Failure"){
-                                valid = 0;
-                                errMsg = response.get("info").toString();
-                            }
-                            else{
-                                user_name = response.get("user").toString();
-                                user_balance = response.get("balance").toString();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-                queue.add(jsObjRequest);
-
-                // switch activity, if authentication is successful
-                if(valid == 1) {
-                    nextScreen.putExtra("username", username);
-                    startActivity(nextScreen);
-                }
-                else { // display the error message
                     banner2.setText(errMsg);
                     banner2.setBackgroundColor(Color.parseColor("#FF0000"));
                 }
+                else {
+                    // Consult server
+                    String url = "http://192.168.11.1:3000/login";
+                    JSONObject reqContent = new JSONObject();
+                    try {
+                        reqContent.put("username", username);
+                        reqContent.put("password", password);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String status = response.get("status").toString();
+                                //show error message
+                                if (status.equals("Failure")) {
+                                    valid = 0;
+                                    errMsg = response.get("info").toString();
+                                    banner2.setText(errMsg);
+                                    banner2.setBackgroundColor(Color.parseColor("#FF0000"));
+                                }
+                                // switch activity, if authentication is successful
+                                else {
+                                    balance = response.get("balance").toString();
+                                    nextScreen.putExtra("username", username);
+                                    nextScreen.putExtra("balance",balance);
+                                    startActivity(nextScreen);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+                    queue.add(jsObjRequest);//send the request
+                }
+
             }
         });
     }

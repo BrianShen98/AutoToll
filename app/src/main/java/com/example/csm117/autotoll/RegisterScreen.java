@@ -25,12 +25,13 @@ public class RegisterScreen extends AppCompatActivity {
     EditText inputPassword;
     int valid; // check if registration is valid or not
     String errMsg; // error message from server side
-    RequestQueue queue = Volley.newRequestQueue(this);
+    RequestQueue queue;
+    Intent nextScreen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_screen);
-
+        queue = Volley.newRequestQueue(this);
         inputNFC = (EditText) findViewById(R.id.input_reg_nfc);
         inputUsername = (EditText) findViewById(R.id.input_reg_username);
         inputPassword = (EditText) findViewById(R.id.input_reg_password);
@@ -41,7 +42,7 @@ public class RegisterScreen extends AppCompatActivity {
         button_cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+                nextScreen = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(nextScreen);
             }
         });
@@ -51,7 +52,7 @@ public class RegisterScreen extends AppCompatActivity {
         button_register.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+                nextScreen = new Intent(getApplicationContext(), MainActivity.class);
 
                 // obtain inputs
                 String nfc = inputNFC.getText().toString();
@@ -71,48 +72,55 @@ public class RegisterScreen extends AppCompatActivity {
                     valid = 0;
                     errMsg = "NFC sticker must be an 8-character hexadecimal";
                 }
-
-                // Consult server
-                String url = "http://localhost:3000/register";
-                JSONObject reqContent = new JSONObject();
-                try {
-                    reqContent.put("NFC_ID",nfc);
-                    reqContent.put("username",username);
-                    reqContent.put("password",password);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.get("status").toString();
-                            String info = response.get("info").toString();
-                            if(status == "Failure"){
-                                valid = 0;
-                                errMsg = info;
-                            }
-                        } catch (JSONException e) {
-                            Log.d("error:","hahahaha");
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-
-                queue.add(jsObjRequest);
-                // switch activity
-                nextScreen.putExtra("registration_success", valid);
-                if(valid == 1)
-                    startActivity(nextScreen);
-                else { // display the error message
+                //response with above err to save the need to consult server
+                if(valid == 0){
                     banner.setText(errMsg);
                     banner.setBackgroundColor(Color.parseColor("#FF0000"));
+                }
+                else {
+                    // Consult server
+                    String url = "http://192.168.11.1:3000/register";
+                    JSONObject reqContent = new JSONObject();
+                    try {
+                        reqContent.put("NFC_ID", nfc);
+                        reqContent.put("username", username);
+                        reqContent.put("password", password);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String status = response.get("status").toString();
+                                String info = response.get("info").toString();
+                                Log.d("status", status);
+                                if (status.equals("Failure")) {// display the error message
+                                    valid = 0;
+                                    errMsg = info;
+                                    banner.setText(errMsg);
+                                    banner.setBackgroundColor(Color.parseColor("#FF0000"));
+                                }
+                                // switch activity
+                                else{
+                                    nextScreen.putExtra("registration_success", valid);
+                                    startActivity(nextScreen);
+                                }
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+
+                    queue.add(jsObjRequest);//send the request
                 }
             }
         });
