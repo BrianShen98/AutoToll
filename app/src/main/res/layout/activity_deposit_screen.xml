@@ -31,11 +31,22 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="143dp" />
 
+    <ImageButton
+        android:id="@+id/refresh_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="right"
+        android:layout_marginBottom="-30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="-50dp"
+        app:srcCompat="@drawable/refresh_icon" />
+
     <TextView
         android:id="@+id/text_log_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginTop="35dp"
         android:text="Hello,"
         android:textSize="18sp"

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -60,12 +61,12 @@ public class AccountInfoScreen extends AppCompatActivity {
             }
         });
         userBalance.setText(init_balance);
+
+
         // deposit button functionality: deposit money into account
         final Button button_deposit = findViewById(R.id.button_deposit);
         button_deposit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO: Change going back to MainActivity to the dashboard activity
-                // starting a new Intent
                 errMsg = ""; // error message from server side
                 valid = 1; // check if login is valid or not
 
@@ -130,11 +131,49 @@ public class AccountInfoScreen extends AppCompatActivity {
 
                     queue.add(jsObjRequest);//send the request
                 }
-
-
             }
         });
 
+
+        // refresh button functionality: update account balance if necessary
+        final ImageButton button_refresh = findViewById(R.id.refresh_button);
+        button_refresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // consult the server to update the balance
+                errMsg = ""; // error message from server side
+                valid = 1; // check if login is valid or not
+                String url = "http://192.168.11.1:3000/deposit";
+                final JSONObject reqContent = new JSONObject();
+
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, reqContent, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String status = response.get("status").toString();
+                            String info = response.get("info").toString();
+                            if (status.equals("Failure")) {
+                                valid = 0;
+                                errMsg = info;
+                                banner3.setText(errMsg);
+                                banner3.setBackgroundColor(Color.parseColor("#FF0000"));
+                            }
+                            else {
+                                curr_balance = Integer.parseInt((String)reqContent.get("amount")); // get the current balance from database
+                                userBalance.setText("" + curr_balance);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+                queue.add(jsObjRequest);//send the request
+            }
+        });
 
     }
 }
