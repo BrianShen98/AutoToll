@@ -68,9 +68,9 @@ public class RegisterScreen extends AppCompatActivity {
                 }
                 // make sure NFC sticker is 4-byte hexadecimal (8 characters)
                 // logic of valid hexadecimal stickers handled server-side
-                else if(nfc.length() != 8) {
+                else if(nfc.length() != 14) {
                     valid = 0;
-                    errMsg = "NFC sticker must be an 8-character hexadecimal";
+                    errMsg = "NFC sticker must be an 14-character (7-byte) hexadecimal";
                 }
                 //response with above err to save the need to consult server
                 if(valid == 0){
