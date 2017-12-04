@@ -79,7 +79,7 @@ public class RegisterScreen extends AppCompatActivity {
                 }
                 else {
                     // Consult server
-                    String url = "http://192.168.11.1:3000/register";
+                    String url = "http://172.29.3.250:3000/register";
                     JSONObject reqContent = new JSONObject();
                     try {
                         reqContent.put("NFC_ID", nfc);

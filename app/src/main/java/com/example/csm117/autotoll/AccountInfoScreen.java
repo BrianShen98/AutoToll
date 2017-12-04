@@ -90,7 +90,7 @@ public class AccountInfoScreen extends AppCompatActivity {
                 else {
                     deposit = Integer.parseInt(strDeposit);
                     // TODO: Add database logic here (read and write database, update balance, etc
-                    String url = "http://192.168.11.1:3000/deposit";
+                    String url = "http://172.29.3.250:3000/deposit";
                     JSONObject reqContent = new JSONObject();
                     try {
                         reqContent.put("username", username);
@@ -142,7 +142,7 @@ public class AccountInfoScreen extends AppCompatActivity {
                 // consult the server to update the balance
                 errMsg = ""; // error message from server side
                 valid = 1; // check if login is valid or not
-                String url = "http://192.168.11.1:3000/deposit";
+                String url = "http://172.29.3.250:3000/deposit";
                 final JSONObject reqContent = new JSONObject();
 
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, reqContent, new Response.Listener<JSONObject>() {

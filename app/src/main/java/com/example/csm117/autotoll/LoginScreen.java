@@ -68,7 +68,7 @@ public class LoginScreen extends AppCompatActivity {
                 }
                 else {
                     // Consult server
-                    String url = "http://192.168.11.1:3000/login";
+                    String url = "http://172.29.3.250:3000/login";
                     JSONObject reqContent = new JSONObject();
                     try {
                         reqContent.put("username", username);

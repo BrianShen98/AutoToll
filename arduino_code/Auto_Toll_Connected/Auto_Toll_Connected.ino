@@ -5,6 +5,7 @@
 #include <WiFi101.h>
 //#include "arduino_secrets.h" 
 #define SECRET_SSID "UCLA_WEB"
+//#define SECRET_SSID "UCLA_WEB_RES"
 #define SECRET_PASS ""
 
 //Enter your Network SSID & PASSWORD IN arduino_secrets.h
@@ -12,14 +13,14 @@ char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS;     // the WiFi radio's status
 uint8_t match = 0;
-
+int count=0;
 //here is waht i add
 uint8_t feedback=0;
 
 //Server Parameters
 byte mac[] = {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char server[] = "131.179.0.93"; //IP Address of Server
+char server[] = "172.29.3.250"; //IP Address of Server
 
 //NFC Shield Setup
 #define PN532_IRQ   (2)
@@ -95,6 +96,7 @@ void loop() {
   Serial.print(F("Please input your NFC tag to continue."));
   //digitalWrite(waitlight, HIGH);
   uint8_t success;
+  //uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidServer[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
@@ -109,7 +111,26 @@ void loop() {
         Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
         Serial.print("  UID Value: ");
         nfc.PrintHex(uid, uidLength);
-        Serial.println("");
+        String myString= (char*)uid;
+        Serial.println(" ");
+        String hexuid[uidLength];
+        
+        for(count=0;count<uidLength;count++)
+        {
+          if(uid[count] < 16)
+          {
+            hexuid[count]=String(uid[count], HEX);
+            hexuid[count]=String("0" + hexuid[count]); 
+          }
+          else
+          {
+            hexuid[count]=String(uid[count], HEX);
+          }
+        }
+       String wholeuidsend=String(hexuid[0]+hexuid[1]+hexuid[2]+hexuid[3]+hexuid[4]+hexuid[5]+hexuid[6]);
+
+        Serial.println(wholeuidsend);
+
         /*
         //send the uid in byte form to server if the server is avaliable
         while(1)
@@ -122,11 +143,10 @@ void loop() {
             break;
           }
         }*/
-        //switch uint8_t to char array 
-        String myString= (char*)uid;
-
+        
+        
         //send the uid in char form to server if the server is avaliable
-        while(1)
+        /*while(1)
         {
           if (client.connect(server, 80)) //Why port 80?
           {
@@ -135,8 +155,8 @@ void loop() {
             client.write(myString[6]); // seventh element
             break;
           }
-        }
-        if(checkMatch(myString) == 1){
+        }*/
+        if(checkMatch(wholeuidsend) == 1){
           go=1;
           break;
         }
@@ -209,17 +229,18 @@ void closeGate(){
 //This function checks for success from the server
 int checkMatch(String uid){
   // Connect to the server (your computer or web page)  
-  if (client.connect(server, 80)) //Why port 80?
+  if (client.connect(server, 3000)) 
   {
     client.print("GET /check");
-    client.print("value="); 
-    client.print(uid); // UID value to compare with server
+    client.print("NFC_ID=");
 
     
+ 
+    client.print(uid); // whole UID value in HEX to compare with server
     
     client.println(" HTTP/1.1"); // Part of the GET request
     //Change IP Address of Server Accordingly
-    client.println("Host: 192.168.0.11"); 
+    client.println("Host: 172.29.3.250"); 
     client.println("Connection: close"); 
     client.println(); // Empty line
     client.println(); // Empty line
