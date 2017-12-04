@@ -19,7 +19,7 @@ uint8_t feedback=0;
 //Server Parameters
 byte mac[] = {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char server[] = "131.179.0.93"; //IP Address of Server
+char server[] = "172.29.3.250"; //IP Address of Server
 
 //NFC Shield Setup
 #define PN532_IRQ   (2)
@@ -124,9 +124,9 @@ void loop() {
         }*/
         //switch uint8_t to char array 
         String myString= (char*)uid;
-
+        
         //send the uid in char form to server if the server is avaliable
-        while(1)
+        /*while(1)
         {
           if (client.connect(server, 80)) //Why port 80?
           {
@@ -135,7 +135,7 @@ void loop() {
             client.write(myString[6]); // seventh element
             break;
           }
-        }
+        }*/
         if(checkMatch(myString) == 1){
           go=1;
           break;
@@ -209,17 +209,16 @@ void closeGate(){
 //This function checks for success from the server
 int checkMatch(String uid){
   // Connect to the server (your computer or web page)  
-  if (client.connect(server, 80)) //Why port 80?
+  if (client.connect(server, 3000)) 
   {
     client.print("GET /check");
-    client.print("value="); 
+    client.print("NFC_ID="); 
     client.print(uid); // UID value to compare with server
 
     
-    
     client.println(" HTTP/1.1"); // Part of the GET request
     //Change IP Address of Server Accordingly
-    client.println("Host: 192.168.0.11"); 
+    client.println("Host: 172.29.3.250"); 
     client.println("Connection: close"); 
     client.println(); // Empty line
     client.println(); // Empty line
