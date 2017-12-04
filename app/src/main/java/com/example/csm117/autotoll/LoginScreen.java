@@ -68,7 +68,7 @@ public class LoginScreen extends AppCompatActivity {
                 }
                 else {
                     // Consult server
-                    String url = "http://172.29.3.250:3000/login";
+                    String url = "http://ec2-13-59-86-172.us-east-2.compute.amazonaws.com:3000/login";
                     JSONObject reqContent = new JSONObject();
                     try {
                         reqContent.put("username", username);

@@ -90,7 +90,7 @@ public class AccountInfoScreen extends AppCompatActivity {
                 else {
                     deposit = Integer.parseInt(strDeposit);
                     // TODO: Add database logic here (read and write database, update balance, etc
-                    String url = "http://172.29.3.250:3000/deposit";
+                    String url = "http://ec2-13-59-86-172.us-east-2.compute.amazonaws.com:3000/deposit";
                     JSONObject reqContent = new JSONObject();
                     try {
                         reqContent.put("username", username);
@@ -142,7 +142,7 @@ public class AccountInfoScreen extends AppCompatActivity {
                 // consult the server to update the balance
                 errMsg = ""; // error message from server side
                 valid = 1; // check if login is valid or not
-                String url = "http://172.29.3.250:3000/deposit";
+                String url = "http://ec2-13-59-86-172.us-east-2.compute.amazonaws.com:3000/deposit";
                 final JSONObject reqContent = new JSONObject();
 
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, reqContent, new Response.Listener<JSONObject>() {
@@ -150,10 +150,10 @@ public class AccountInfoScreen extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             String status = response.get("status").toString();
-                            String info = response.get("info").toString();
+
                             if (status.equals("Failure")) {
                                 valid = 0;
-                                errMsg = info;
+                                errMsg = response.get("info").toString();;
                                 banner3.setText(errMsg);
                                 banner3.setBackgroundColor(Color.parseColor("#FF0000"));
                             }
