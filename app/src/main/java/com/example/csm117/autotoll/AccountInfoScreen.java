@@ -153,7 +153,7 @@ public class AccountInfoScreen extends AppCompatActivity {
 
                             if (status.equals("Failure")) {
                                 valid = 0;
-                                errMsg = response.get("info").toString();;
+                                errMsg = response.get("info").toString();
                                 banner3.setText(errMsg);
                                 banner3.setBackgroundColor(Color.parseColor("#FF0000"));
                             }
