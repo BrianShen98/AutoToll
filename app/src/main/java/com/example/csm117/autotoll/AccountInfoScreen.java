@@ -142,10 +142,14 @@ public class AccountInfoScreen extends AppCompatActivity {
                 // consult the server to update the balance
                 errMsg = ""; // error message from server side
                 valid = 1; // check if login is valid or not
-                String url = "http://ec2-13-59-86-172.us-east-2.compute.amazonaws.com:3000/deposit";
-                final JSONObject reqContent = new JSONObject();
-
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, reqContent, new Response.Listener<JSONObject>() {
+                String url = "http://ec2-13-59-86-172.us-east-2.compute.amazonaws.com:3000/refresh";
+                JSONObject reqContent = new JSONObject();
+                try {
+                    reqContent.put("username", username);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url, reqContent, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -153,12 +157,12 @@ public class AccountInfoScreen extends AppCompatActivity {
 
                             if (status.equals("Failure")) {
                                 valid = 0;
-                                errMsg = response.get("info").toString();;
+                                errMsg = response.get("info").toString();
                                 banner3.setText(errMsg);
                                 banner3.setBackgroundColor(Color.parseColor("#FF0000"));
                             }
                             else {
-                                curr_balance = Integer.parseInt((String)reqContent.get("amount")); // get the current balance from database
+                                curr_balance = Integer.parseInt(response.get("amount").toString()); // get the current balance from database
                                 userBalance.setText("" + curr_balance);
                             }
                         } catch (JSONException e) {
