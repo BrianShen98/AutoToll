@@ -8,9 +8,12 @@
   },
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "express": "^4.16.2"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "^4.16.2",
-    "hbs": "^4.0.1"
+    "mysql": "^2.15.0",
+    "password-hash": "^1.2.2"
   }
 }
