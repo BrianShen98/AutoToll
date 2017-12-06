@@ -4,23 +4,23 @@
 #include <Wire.h>
 #include <WiFi101.h>
 //#include "arduino_secrets.h" 
-#define SECRET_SSID "UCLA_WEB"
+#define SECRET_SSID "IEEE 2.4GHz"
 //#define SECRET_SSID "UCLA_WEB_RES"
-#define SECRET_PASS ""
+#define SECRET_PASS "Ilovesolder"
+
+//#define SECRET_SSID "NETGEAR85"
+//#define SECRET_PASS "whateverucla2016"
 
 //Enter your Network SSID & PASSWORD IN arduino_secrets.h
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS;     // the WiFi radio's status
-uint8_t match = 0;
 int count=0;
-//here is waht i add
-uint8_t feedback=0;
 
 //Server Parameters
 byte mac[] = {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char server[] = "172.29.3.250"; //IP Address of Server
+char server[] = "ec2-13-59-86-172.us-east-2.compute.amazonaws.com"; //DNS converted IP Address
 
 //NFC Shield Setup
 #define PN532_IRQ   (2)
@@ -33,7 +33,7 @@ int waitlight = 3;
 int greenlight = 5;
 int INB=10;
 int INA=9;
-int value = 100;  //UNKNOWN YET, NEED TO TEST VALUE 
+int value = 200;  //UNKNOWN YET, NEED TO TEST VALUE 
 int go=0;
 
  //Initialize the Wifi Client
@@ -62,15 +62,14 @@ void setup() {
       Serial.print(F("Attempting to connect to WPA SSID: "));
       Serial.println(ssid);
     // Connect to WPA/WPA2 network:
-      status = WiFi.begin(ssid);
+      //status = WiFi.begin(ssid); //Use if no password for your network
+      status = WiFi.begin(ssid,pass);
 
     // wait 10 seconds for connection:
     delay(10000);
     }
       Serial.println(F("Connected!"));
-      printCurrentNet();
-      printWiFiData();
-
+      delay(1000);
       //Set up the NFC module
       Serial.println(F("Starting NF-Reader..."));
       nfc.begin();
@@ -81,8 +80,6 @@ void setup() {
       }
       // Got ok data, print it out!
       Serial.print(F("Found chip PN5")); Serial.println((versiondata>>24) & 0xFF, HEX); 
-      Serial.print(F("Firmware ver. ")); Serial.print((versiondata>>16) & 0xFF, DEC); 
-      Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
             
       // configure board to read RFID tags
       nfc.SAMConfig();
@@ -91,12 +88,8 @@ void setup() {
 }
 
 void loop() {
-  while(go==0)
-  {
   Serial.print(F("Please input your NFC tag to continue."));
-  //digitalWrite(waitlight, HIGH);
   uint8_t success;
-  //uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidServer[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
@@ -107,14 +100,11 @@ void loop() {
   
   if(success)
       {
-        Serial.println("Found an ISO14443A card");
-        Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
-        Serial.print("  UID Value: ");
+        Serial.println("Found a NFC tag");
         nfc.PrintHex(uid, uidLength);
         String myString= (char*)uid;
         Serial.println(" ");
         String hexuid[uidLength];
-        
         for(count=0;count<uidLength;count++)
         {
           if(uid[count] < 16)
@@ -128,42 +118,12 @@ void loop() {
           }
         }
        String wholeuidsend=String(hexuid[0]+hexuid[1]+hexuid[2]+hexuid[3]+hexuid[4]+hexuid[5]+hexuid[6]);
-
-        Serial.println(wholeuidsend);
-
-        /*
-        //send the uid in byte form to server if the server is avaliable
-        while(1)
-        {
-          if (client.connect(server, 80)) //Why port 80?
-          {
-            client.write(uid[1]); //second byte
-            client.write(uid[2]); //third byte
-            client.write(uid[6]); // seventh byte
-            break;
-          }
-        }*/
-        
-        
-        //send the uid in char form to server if the server is avaliable
-        /*while(1)
-        {
-          if (client.connect(server, 80)) //Why port 80?
-          {
-            client.write(myString[1]); //second element
-            client.write(myString[2]); //third element
-            client.write(myString[6]); // seventh element
-            break;
-          }
-        }*/
-        if(checkMatch(wholeuidsend) == 1){
+       int stuff = checkMatch(wholeuidsend);
+       if(stuff == 1)
           go=1;
-          break;
-        }
-        else
+       else
           go=0;
       }
-  }
     while(go==1)
     {
       digitalWrite(waitlight, LOW);       // red light is off when the inforamtion is verified
@@ -174,9 +134,10 @@ void loop() {
       closeGate();
     }
       // Wait a bit before trying again
-    Serial.println(F("\n\nSend Another Tag!"));
+    client.flush();
     Serial.flush();
     Serial.flush();    
+    delay(1000);
 }
 
 void printWiFiData() {
@@ -204,9 +165,7 @@ void printWiFiData() {
 
 }
 
-void openGate(){
-    
-    
+void openGate(){ 
     analogWrite(INA, value);
     digitalWrite(INB, LOW);       
     delay(50);
@@ -231,34 +190,41 @@ int checkMatch(String uid){
   // Connect to the server (your computer or web page)  
   if (client.connect(server, 3000)) 
   {
-    client.print("GET /check");
+    //Make char array with 7 letters that has null character at entry 7
+    char check[7]= {'S','U','C','C','E','S','S'};
+    int counter=0;
+    client.print("GET /check?");
     client.print("NFC_ID=");
-
-    
- 
     client.print(uid); // whole UID value in HEX to compare with server
-    
     client.println(" HTTP/1.1"); // Part of the GET request
     //Change IP Address of Server Accordingly
-    client.println("Host: 172.29.3.250"); 
+    client.println("Host: ec2-13-59-86-172.us-east-2.compute.amazonaws.com"); 
     client.println("Connection: close"); 
     client.println(); // Empty line
     client.println(); // Empty line
-    //reading the server's feedback
-    feedback=client.read();
+    //reading the server's response for SUCCESS
+    while(!client.available()){}
+    while(client.available()>0)
+    {
+      char c=client.read();
+      while(c == check[counter])
+      {
+        counter++;
+        while(client.available() == 0) {} //give delay
+        c=client.read();
+        if(counter=7)
+          return 1;
+      }   
+      counter=0;
+    }
     client.stop();    // Closing connection to server
-    //return 1;
-    return feedback;
-  }
-
-  else {
-    // If Arduino can't connect to the server (your computer or web page)
-    Serial.println("--> connection failed\n");
     return 0;
   }
- 
-  // Give the server some time to recieve the data and store it. I used 10 seconds here. Be advised when delaying. If u use a short delay, the server might not capture data because of Arduino transmitting new data too soon.
-  delay(10000);
+  else {
+    // If Arduino can't connect to the server (your computer or web page)
+    Serial.println("--> Connection Failed\n");
+    return 0;
+  }
 }
 
 
@@ -294,4 +260,5 @@ void printCurrentNet() {
   Serial.println(encryption, HEX);
   Serial.println();
 }
+
 
