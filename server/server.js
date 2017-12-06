@@ -114,15 +114,17 @@ app.get("/check",(req,res)=>{
     console.log(NFC_ID);
     pool.getConnection((err,connection)=>{
 	if(err){
-	    res.json({status:"Failure",info:"Error in database connction!"});
+	    res.send('FAILURE');
+	    console.log('connection failure')
 	    return;
 	}
-	connection.query("SELECT Balance from Users WHERE NFC_ID = \"" + NFC_ID+"\"",(error,result,field)=>{
+	connection.query("SELECT Balance from Users WHERE NFC_ID = \"" + NFC_ID+"\" AND Username IS NOT NULL",(error,result,field)=>{
 	    if(error) throw error;
 
-	    //if the NFC_ID is not registered, refuse to open the gate
+	    //if the NFC_ID is not registered, or user is not registered, refuse to open the gate
 	    if(result.length == 0){
-		res.json({status:"Failure",info:"The NFC_ID is not registered!"});
+		res.send("FAILURE");
+		console.log('user does not exist')
 		connection.release();
 	    }
 
@@ -131,13 +133,15 @@ app.get("/check",(req,res)=>{
 	    else if(result[0].Balance > 0){
 		connection.query("UPDATE Users SET Balance = " + (result[0].Balance -3) + " WHERE NFC_ID = \""+NFC_ID+"\"",(error,result,field)=>{
 		    if(error) throw error;
-		    res.json({status:"Success"});
+		    res.send('SUCCESS');
+		    console.log('success!')
 		    connection.release();
 		});
 	    }
 	    //else refuse to open the gate
 	    else{
-		res.json({status:"Failure",info:"Balance below zero!"});
+		res.send('FAILURE');
+		console.log('balance below zero!')
 		connection.release();
 	    }
 
@@ -174,8 +178,9 @@ app.post("/login",(req,res)=>{
 
 })
 
-app.get("/refresh",(req,res)=>{
-    let username = req.query.username;
+app.post("/refresh",(req,res)=>{
+    let username = req.body.username;
+    console.log(username)
     pool.getConnection((err,connection)=>{
 	if(err){
 	    res.json({status:"Failure",info:"Error in database connection"});
