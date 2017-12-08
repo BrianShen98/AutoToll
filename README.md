@@ -11,10 +11,10 @@ This repository features the frontend and backend of the Android mobile applicat
 - Java and XML on the frontend and UI
   - Registration: User registers the car including the NFC ID, username of choice, and password of choice
   - Login: User who has registered can login using their credentials
-  - Account Info: Screen contains the account balance as well as the username and deposit money feature
+  - Account Info: Screen contains the account balance as well as the refresh and deposit money feature
 - NodeJS and SQL on the backend
-  - Receives the NFC sticker ID which updates the database accordingly (deducting account balance)
-
+  - Check whether the NFC ID is a valid one issued by our project during registration and update username and password accourdingly.
+  - Receive NFC ID from Arduino at the gate, check the balance of the user, deduct account balance and notify Arduino whether to open the gate or not.
 
 ### Contributors (last name alphabetical)
 ##### Hardware
